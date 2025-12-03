@@ -46,8 +46,8 @@ public class GameBoard {
     }
 
     public int oppositePit(int index) {
-        // need to work on this for all pits execpt mancala
-        return 12 - index;
+            return 12 - index;
+    
     }
 
     public void printBoard() {
