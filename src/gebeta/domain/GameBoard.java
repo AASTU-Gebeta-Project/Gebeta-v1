@@ -1,6 +1,9 @@
 package gebeta.domain;
 
-public class GameBoard {
+import java.io.Serializable;
+
+public class GameBoard implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public static final int TOTAL_PITS = 14;
     public static final int INITIAL_STONE = 4;

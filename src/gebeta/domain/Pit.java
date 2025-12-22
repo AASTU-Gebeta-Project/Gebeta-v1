@@ -1,6 +1,9 @@
 package gebeta.domain;
 
-public class Pit {
+import java.io.Serializable;
+
+public class Pit implements Serializable{
+    private static final long serialVersionUID = 1L;
     private int index;
     private int stoneCount;
 
