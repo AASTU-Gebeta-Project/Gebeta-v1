@@ -56,6 +56,30 @@ public class GameManager{
         currentPlayer = currentPlayer == player1? player2: player1;
 
     }
+    
+    public Player getWinner() {
+        if (!gameOver) {
+            return null;
+        }
+
+        int score1 = player1.getScore(board);
+        int score2 = player2.getScore(board);
+
+        if (score1 > score2) {
+            return player1;
+        } else if (score2 > score1) {
+            return player2;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean isDraw() {
+        if (!gameOver) {
+            return false;
+        }
+        return player1.getScore(board) == player2.getScore(board);
+    }
 //// save and load the game
     public void saveGame() {
         saveLoadSystem.saveGame(board, player1, player2, currentPlayer);

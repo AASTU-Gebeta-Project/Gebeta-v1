@@ -8,12 +8,10 @@ public class GameBoard implements Serializable {
     public static final int TOTAL_PITS = 14;
     public static final int INITIAL_STONE = 4;
 
-    // Player 1
     public static final int P1_START = 0;
     public static final int P1_END = 5;
     public static final int P1_STORE = 6;
 
-    // Player 2
     public static final int P2_START = 7;
     public static final int P2_END = 12;
     public static final int P2_STORE = 13;
@@ -25,7 +23,6 @@ public class GameBoard implements Serializable {
 
         for (int i = 0; i < TOTAL_PITS; i++) {
 
-            // Stores start with 0 stones
             if (i == P1_STORE || i == P2_STORE) {
                 pits[i] = new Pit(i, 0);
             } else {

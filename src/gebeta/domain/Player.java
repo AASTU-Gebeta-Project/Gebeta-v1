@@ -33,7 +33,6 @@ public class Player implements Serializable {
         return storePit;
     }
 
-    // Score = the number of stones in the player's store pit
     public int getScore(GameBoard board) {
         return board.getPit(storePit).getStoneCount();
     }

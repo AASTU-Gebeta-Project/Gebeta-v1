@@ -71,7 +71,6 @@ public class GameLogic {
     // Move all remaining stones to the correct player's store at game end.
     public void collectRemainingStones(GameBoard board, Player p1, Player p2) {
 
-        // Player 1 remaining stones
         int p1Remaining = 0;
         for (int i = p1.getStartPit(); i <= p1.getEndPit(); i++) {
             p1Remaining += board.getPit(i).removeAllStones();
@@ -80,7 +79,6 @@ public class GameLogic {
                 board.getPit(p1.getStorePit()).getStoneCount() + p1Remaining
         );
 
-        // Player 2 remaining stones
         int p2Remaining = 0;
         for (int i = p2.getStartPit(); i <= p2.getEndPit(); i++) {
             p2Remaining += board.getPit(i).removeAllStones();
