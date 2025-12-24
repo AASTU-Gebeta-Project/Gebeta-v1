@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gebeta.ui.UIController">
+
+    <!-- ================= HEADER ================= -->
+    <top>
+        <Label text="Cultural Background of Gebeta"
+               alignment="CENTER"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;"
+               BorderPane.alignment="CENTER"
+               padding="10"/>
+    </top>
+
+    <!-- ================= CONTENT ================= -->
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="10" padding="15">
+
+                <Label text="What is Gebeta?"
+                       style="-fx-font-weight: bold;"/>
+
+                <Label wrapText="true"
+                       text="Gebeta is a traditional Ethiopian board game belonging to the Mancala family. It has been played for centuries and is deeply rooted in Ethiopian culture and social life."/>
+
+                <Label text="Cultural Significance"
+                       style="-fx-font-weight: bold;"/>
+
+                <Label wrapText="true"
+                       text="Gebeta is more than a game; it is a social activity that promotes strategic thinking, patience, and community interaction. It is commonly played during social gatherings and cultural events."/>
+
+                <Label text="How the Game is Traditionally Played"
+                       style="-fx-font-weight: bold;"/>
+
+                <Label wrapText="true"
+                       text="Traditionally, Gebeta boards are carved from wood or stone, and seeds or stones are used as playing pieces. Players sit facing each other and take turns distributing stones according to established rules."/>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- ================= FOOTER ================= -->
+    <bottom>
+        <Button text="Back"
+                onAction="#onBackFromCulturalInfo"
+                BorderPane.alignment="CENTER"
+                padding="10"/>
+    </bottom>
+
+</BorderPane>

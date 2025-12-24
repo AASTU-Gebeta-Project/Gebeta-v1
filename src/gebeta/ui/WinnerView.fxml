@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="gebeta.ui.UIController"
+           style="-fx-background-color: rgba(0,0,0,0.7);">
+
+    <VBox spacing="15"
+          alignment="CENTER"
+          style="-fx-background-color: white; -fx-padding: 25; -fx-border-radius: 10;">
+
+        <Label fx:id="resultLabel"
+               text="Winner"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+        <Label fx:id="scoreLabel"
+               text="Scores"/>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Restart Game" onAction="#onRestartGame"/>
+            <Button text="Main Menu" onAction="#onGoToMainMenu"/>
+            <Button text="Exit" onAction="#onExitGame"/>
+        </HBox>
+
+    </VBox>
+
+</StackPane>
