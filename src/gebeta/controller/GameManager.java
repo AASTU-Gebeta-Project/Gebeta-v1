@@ -116,5 +116,8 @@ public class GameManager{
     public boolean isGameOver() {
         return gameOver;
     }
+    public int getScore(Player player){
+        return player.getScore(board);
+    }
 
 }
