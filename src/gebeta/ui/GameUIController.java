@@ -121,7 +121,7 @@ public class GameUIController {
             }
 
             // Reset game logic
-            gameManager.startNewGame("Player 1", "Player 2");
+            gameManager.startNewGame("Player 1", "Player 2", false, null);
 
             // Remove pause menu
             mainContainer.getChildren().remove(pauseBox);

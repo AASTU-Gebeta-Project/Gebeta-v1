@@ -44,7 +44,7 @@ public class GameManager{
         Player opponent = (currentPlayer == player1) ? player2 : player1;
         boolean extraTurn = gameLogic.executeMove(board, currentPlayer, opponent, pitIndex);
 
-        // CHECK IF GAME IS OVER AFTER MOVE
+    
         if (gameLogic.isGameOver(board, player1, player2)) {
             gameLogic.collectRemainingStones(board, player1, player2);
             this.gameOver = true;
@@ -62,12 +62,12 @@ public class GameManager{
 
     }
 
-    public void requestAIMove() {
-        if (!gameOver && currentPlayer == player2) {
-            int bestPit = ai.findBestMove(board, player2, player1);
-            playTurn(bestPit);
-        }
-    }
+    // public void requestAIMove() {
+    //     if (!gameOver && currentPlayer == player2) {
+    //         int bestPit = ai.findBestMove(board, player2, player1);
+    //         playTurn(bestPit);
+    //     }
+    // }
     public int getBestMoveForAI() {
         if (currentPlayer.isAI()) {
             return ai.findBestMove(board, currentPlayer, getOpponent(currentPlayer));
