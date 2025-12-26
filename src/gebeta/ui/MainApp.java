@@ -15,9 +15,16 @@ public class MainApp extends Application {
     }
 
     public void showStartMenu() {
-        StartMenuView menu = new StartMenuView(this::launchGame, () -> {});
+        // Replace the empty lambda () -> {} with this::showCulturalInfo
+        StartMenuView menu = new StartMenuView(this::launchGame, this::showCulturalInfo);
         stage.setScene(new Scene(menu, 1100, 500));
         stage.show();
+    }
+
+    // Logic to switch to the new Info page
+    private void showCulturalInfo() {
+        CulturalInfoView infoPage = new CulturalInfoView(this::showStartMenu);
+        stage.getScene().setRoot(infoPage.getRoot());
     }
 
     private void launchGame() {
