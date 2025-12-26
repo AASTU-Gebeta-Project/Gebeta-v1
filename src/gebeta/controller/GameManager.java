@@ -16,6 +16,7 @@ public class GameManager{
     private final GameLogic gameLogic;
     private final MoveValidator moveValidator;
     private final SaveLoadSystem saveLoadSystem;
+    private  GebetaAI  ai = new GebetaAI(6) ;// will be updated for the label
 
     public GameManager(){
         gameLogic  = new GameLogic();
@@ -53,8 +54,23 @@ public class GameManager{
         return true;
     }
     private void switchTurn(){
-        currentPlayer = currentPlayer == player1? player2: player1;
+        currentPlayer = getOpponent(currentPlayer);
+        if (!gameOver && currentPlayer.isAI()) {
+            triggerAIMove();
+    }
 
+    }
+
+    public void requestAIMove() {
+        if (!gameOver && currentPlayer == player2) {
+            int bestPit = ai.findBestMove(board, player2, player1);
+            playTurn(bestPit);
+        }
+    }
+    private void triggerAIMove() {
+        // You can add a small delay here so the human can see what's happening
+        int bestPit = ai.findBestMove(board, currentPlayer, getOpponent(currentPlayer));
+        playTurn(bestPit);
     }
     
     public Player getWinner() {
@@ -103,6 +119,10 @@ public class GameManager{
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+    public Player getOpponent(Player currentPlayer){
+        Player opponent = currentPlayer == player1? player2: player1;
+        return opponent;
     }
 
     public Player getPlayer1() {
