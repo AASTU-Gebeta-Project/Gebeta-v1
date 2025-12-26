@@ -119,7 +119,7 @@ public class GameManager{
             this.gameOver = false;
             if (this.player2.isAI()) {
                 // You might need to save/load the difficulty too!
-                this.ai = new GebetaAI(Difficulty.MEDIUM); 
+                this.ai = new GebetaAI(this.currentDifficulty); 
             }
         }
         

@@ -34,8 +34,4 @@ public class Pit implements Serializable{
         return stones;
     }
 
-    @Override
-    public String toString() {
-        return "Pit { index = " + index + ", stones = " + stoneCount + " }";
-    }
 }
