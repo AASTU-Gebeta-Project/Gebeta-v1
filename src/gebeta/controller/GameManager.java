@@ -1,8 +1,6 @@
 package gebeta.controller;
 
-import gebeta.domain.GameBoard;
-import gebeta.domain.GameLogic;
-import gebeta.domain.Player;
+import gebeta.domain.*;
 import gebeta.persistence.SaveLoadSystem;
 
 
@@ -16,7 +14,9 @@ public class GameManager{
     private final GameLogic gameLogic;
     private final MoveValidator moveValidator;
     private final SaveLoadSystem saveLoadSystem;
-    private  GebetaAI  ai = new GebetaAI(6) ;// will be updated for the label
+
+    private  GebetaAI ai;
+    private Difficulty currentDifficulty;
 
     public GameManager(){
         gameLogic  = new GameLogic();
@@ -24,11 +24,15 @@ public class GameManager{
         saveLoadSystem = new SaveLoadSystem();
     }
 
-    public void startNewGame(String Player1Name, String Player2Name){
+    public void startNewGame(String p1Name, String p2Name, boolean vsAI, Difficulty difficulty){
         board = new GameBoard();
-        player1 = new Player(Player1Name, GameBoard.P1_START, GameBoard.P1_END, GameBoard.P1_STORE);
+        player1 = new Player(p1Name, GameBoard.P1_START, GameBoard.P1_END, GameBoard.P1_STORE, false);
 
-        player2 = new Player(Player2Name, GameBoard.P2_START, GameBoard.P2_END,  GameBoard.P2_STORE);
+        player2 = new Player(p2Name, GameBoard.P2_START, GameBoard.P2_END,  GameBoard.P2_STORE, vsAI);
+        this.currentDifficulty = difficulty;
+        if (vsAI) {
+            this.ai = new GebetaAI(difficulty);
+        }
         currentPlayer = player1;
         gameOver = false;
     }
@@ -49,15 +53,16 @@ public class GameManager{
         }
         if (!extraTurn){
             switchTurn();
+        }else {
+        // RULE: If AI gets an extra turn, we must trigger it again!
+        if (currentPlayer.isAI()) {
         }
+    }
 
         return true;
     }
     private void switchTurn(){
         currentPlayer = getOpponent(currentPlayer);
-        if (!gameOver && currentPlayer.isAI()) {
-            triggerAIMove();
-    }
 
     }
 
@@ -67,11 +72,13 @@ public class GameManager{
             playTurn(bestPit);
         }
     }
-    private void triggerAIMove() {
-        // You can add a small delay here so the human can see what's happening
-        int bestPit = ai.findBestMove(board, currentPlayer, getOpponent(currentPlayer));
-        playTurn(bestPit);
+    public int getBestMoveForAI() {
+        if (currentPlayer.isAI()) {
+            return ai.findBestMove(board, currentPlayer, getOpponent(currentPlayer));
+        }
+        return -1;
     }
+   
     
     public Player getWinner() {
         if (!gameOver) {
@@ -110,7 +117,12 @@ public class GameManager{
             this.player2 = result.getPlayer2();
             this.currentPlayer = result.getCurrentPlayer();
             this.gameOver = false;
+            if (this.player2.isAI()) {
+                // You might need to save/load the difficulty too!
+                this.ai = new GebetaAI(Difficulty.MEDIUM); 
+            }
         }
+        
     }
 
     public GameBoard getBoard() {

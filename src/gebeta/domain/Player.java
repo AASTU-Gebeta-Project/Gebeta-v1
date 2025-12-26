@@ -11,11 +11,12 @@ public class Player implements Serializable {
     private int storePit;
     private boolean isAI;
 
-    public Player(String name, int startPit, int endPit, int storePit) {
+    public Player(String name, int startPit, int endPit, int storePit, boolean isAI) {
         this.name = name;
         this.startPit = startPit;
         this.endPit = endPit;
         this.storePit = storePit;
+        this.isAI = isAI;
     }
 
     public String getName() {
