@@ -30,6 +30,12 @@ public class GameBoard implements Serializable {
             }
         }
     }
+    public GameBoard(GameBoard other){
+        this.pits = new Pit[TOTAL_PITS];
+        for(int i = 0; i < TOTAL_PITS; i++){
+            this.pits[i] = new Pit(i, other.getPit(i).getStoneCount());
+        }
+    }
 
     public Pit getPit(int index) {
         if (index < 0 || index >= TOTAL_PITS)

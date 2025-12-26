@@ -9,12 +9,14 @@ public class Player implements Serializable {
     private int startPit;
     private int endPit;
     private int storePit;
+    private boolean isAI;
 
-    public Player(String name, int startPit, int endPit, int storePit) {
+    public Player(String name, int startPit, int endPit, int storePit, boolean isAI) {
         this.name = name;
         this.startPit = startPit;
         this.endPit = endPit;
         this.storePit = storePit;
+        this.isAI = isAI;
     }
 
     public String getName() {
@@ -36,4 +38,8 @@ public class Player implements Serializable {
     public int getScore(GameBoard board) {
         return board.getPit(storePit).getStoneCount();
     }
+    public boolean isAI(){
+        return isAI;
+    }
+
 }
