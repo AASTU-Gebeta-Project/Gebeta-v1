@@ -13,7 +13,7 @@ public class PitView extends StackPane {
     private final int pitIndex;
     private final FlowPane stonesPane = new FlowPane();
     private final Random random = new Random();
-    private final Color[] stoneColors = {Color.DEEPSKYBLUE, Color.ORANGERED, Color.SPRINGGREEN, Color.GOLD};
+    private final Color[] stoneColors = {Color.DARKGOLDENROD, Color.DARKGOLDENROD, Color.DARKGOLDENROD, Color.DARKGOLDENROD};
 
     public PitView(int pitIndex, int stones, boolean isStore) {
         this.pitIndex = pitIndex;
@@ -24,10 +24,11 @@ public class PitView extends StackPane {
             storeRect.setFill(Color.SILVER);
             storeRect.setArcWidth(20);
             storeRect.setArcHeight(20);
-            storeRect.setStroke(Color.WHITE);
+            storeRect.setStroke(Color.BLACK);
+            storeRect.setStrokeWidth(4);
             getChildren().add(storeRect);
         } else {
-            // Circular Pits - Size 40 fits better inside the wood graphic
+
             Circle pitCircle = new Circle(40);
             pitCircle.setFill(Color.web("#5d4037"));
             pitCircle.setStroke(Color.WHITE);
@@ -38,7 +39,7 @@ public class PitView extends StackPane {
         stonesPane.setAlignment(Pos.CENTER);
         stonesPane.setHgap(2);
         stonesPane.setVgap(2);
-        // Constrain stone area so they don't float outside the circles
+
         stonesPane.setMaxSize(isStore ? 65 : 75, isStore ? 165 : 75);
 
         getChildren().add(stonesPane);

@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.geometry.Insets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,12 @@ public class GameUIController {
         setupLayout();
         buildBoard();
         refreshBoard();
-        playGameMusic(); // Starts the Ethiopian Instrumental
+        playGameMusic();
     }
 
     private void playGameMusic() {
         try {
-            // Updated to the specific instrumental path provided
+
             var res = getClass().getResource("/gebeta/resources/Ethiopian_Instrumental_1(128k).m4a");
             if (res != null) {
                 gameMusicPlayer = new MediaPlayer(new Media(res.toExternalForm()));
@@ -53,7 +54,7 @@ public class GameUIController {
 
     private void setupBackground() {
         try {
-            Image gameBg = new Image(getClass().getResourceAsStream("/gebeta/resources/game_bg.png"));
+            Image gameBg = new Image(getClass().getResourceAsStream("/gebeta/resources/Gemini_Generated_Image_6hac4m6hac4m6hac.png"));
             ImageView bgView = new ImageView(gameBg);
             bgView.setFitWidth(1100); bgView.setFitHeight(500);
             mainContainer.getChildren().add(bgView);
@@ -62,33 +63,37 @@ public class GameUIController {
     }
 
     private void setupLayout() {
-        // Reduced gaps to keep pits inside the wooden board area
+
         boardPane.setHgap(12);
-        boardPane.setVgap(30);
+        boardPane.setVgap(-10);
         boardPane.setAlignment(Pos.CENTER);
 
         turnLabel.setStyle("-fx-font-size: 22; -fx-text-fill: gold; -fx-background-color: rgba(0,0,0,0.8); -fx-padding: 8;");
         scoreP1.setStyle("-fx-text-fill: #3498db; -fx-font-size: 18; -fx-font-weight: bold;");
         scoreP2.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 18; -fx-font-weight: bold;");
 
-        // Player side labels updated to blue
+
         Label p2Ind = new Label("PLAYER TWO (TOP)");
         p2Ind.setStyle("-fx-text-fill: black; -fx-font-size: 22px; -fx-font-weight: bold;");
 
         Label p1Ind = new Label("PLAYER ONE (BOTTOM)");
         p1Ind.setStyle("-fx-text-fill: black; -fx-font-size: 22px; -fx-font-weight: bold;");
 
-        VBox topCenter = new VBox(5, turnLabel, p2Ind);
+        VBox topCenter = new VBox(3, turnLabel, p2Ind);
         topCenter.setAlignment(Pos.CENTER);
         HBox topBox = new HBox(80, scoreP2, topCenter, scoreP1);
         topBox.setAlignment(Pos.CENTER);
-        topBox.setStyle("-fx-padding: 10;");
+        topBox.setStyle("-fx-padding:  5 0 0 0;");
 
         Button btnPause = new Button("PAUSE");
         btnPause.setOnAction(e -> showPauseMenu());
 
         uiOverlay.setTop(topBox);
-        uiOverlay.setCenter(boardPane); // Centers the grid directly on the wood
+        VBox centerBox = new VBox(boardPane);
+        centerBox.setAlignment(Pos.TOP_CENTER); // moves board toward top
+        VBox.setMargin(boardPane, new Insets(0, 0, 0, 0)); // fine-tune top margin
+        uiOverlay.setCenter(centerBox);
+
 
         VBox bottomBox = new VBox(5, p1Ind, btnPause);
         bottomBox.setAlignment(Pos.CENTER);
@@ -106,6 +111,24 @@ public class GameUIController {
 
         Button resume = new Button("RESUME");
         resume.setOnAction(e -> mainContainer.getChildren().remove(pauseBox));
+        Button restart = new Button("RESTART");
+        restart.setOnAction(e -> {
+            // Stop music first
+            if (gameMusicPlayer != null) {
+                gameMusicPlayer.stop();
+            }
+
+            // Reset game logic
+            gameManager.startNewGame("Player 1", "Player 2");
+
+            // Remove pause menu
+            mainContainer.getChildren().remove(pauseBox);
+
+            // Restart music and refresh UI
+            playGameMusic();
+            refreshBoard();
+        });
+
 
         Button exit = new Button("HOME");
         exit.setOnAction(e -> {
@@ -113,7 +136,7 @@ public class GameUIController {
             backToHome.run();
         });
 
-        pauseBox.getChildren().addAll(pauseLbl, resume, exit);
+        pauseBox.getChildren().addAll(pauseLbl, resume, restart, exit);
         mainContainer.getChildren().add(pauseBox);
     }
 
@@ -164,8 +187,19 @@ public class GameUIController {
     private void addPit(int index, int col, int row, boolean isStore) {
         PitView pv = new PitView(index, gameManager.getBoard().getPit(index).getStoneCount(), isStore);
         pitViews.add(pv);
+
+        // Add to the grid normally
         boardPane.add(pv, col, row);
-        if (!isStore) pv.setOnMouseClicked(e -> { if(gameManager.playTurn(index)) refreshBoard(); });
+
+        if (isStore) {
+            // Pushes ONLY the store down by a specific pixel amount.
+            // Adjust the '45' until it is perfectly centered between your pit rows.
+            pv.setTranslateY(60);
+        } else {
+            pv.setOnMouseClicked(e -> {
+                if(gameManager.playTurn(index)) refreshBoard();
+            });
+        }
     }
 
     public StackPane getRoot() { return mainContainer; }
