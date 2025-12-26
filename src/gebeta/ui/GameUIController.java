@@ -54,9 +54,11 @@ public class GameUIController {
 
     private void setupBackground() {
         try {
-            Image gameBg = new Image(getClass().getResourceAsStream("/gebeta/resources/Gemini_Generated_Image_6hac4m6hac4m6hac.png"));
+            Image gameBg = new Image(getClass().getResourceAsStream("/gebeta/resources/final2.png"));
             ImageView bgView = new ImageView(gameBg);
-            bgView.setFitWidth(1100); bgView.setFitHeight(500);
+            bgView.setPreserveRatio(false); // stretch to fill the container
+            bgView.fitWidthProperty().bind(mainContainer.widthProperty());
+            bgView.fitHeightProperty().bind(mainContainer.heightProperty());
             mainContainer.getChildren().add(bgView);
         } catch (Exception e) { mainContainer.setStyle("-fx-background-color: #2c3e50;"); }
         mainContainer.getChildren().add(uiOverlay);
@@ -69,17 +71,17 @@ public class GameUIController {
         boardPane.setAlignment(Pos.CENTER);
 
         turnLabel.setStyle("-fx-font-size: 22; -fx-text-fill: gold; -fx-background-color: rgba(0,0,0,0.8); -fx-padding: 8;");
-        scoreP1.setStyle("-fx-text-fill: #3498db; -fx-font-size: 18; -fx-font-weight: bold;");
-        scoreP2.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 18; -fx-font-weight: bold;");
+        scoreP1.setStyle("-fx-text-fill: #3498db; -fx-font-size: 20; -fx-font-weight: bold;");
+        scoreP2.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 20; -fx-font-weight: bold;");
 
 
-        Label p2Ind = new Label("PLAYER TWO (TOP)");
-        p2Ind.setStyle("-fx-text-fill: black; -fx-font-size: 22px; -fx-font-weight: bold;");
+        Label p2Ind = new Label("PLAYER TWO ");
+        p2Ind.setStyle("-fx-text-fill: WHITE; -fx-font-size: 22px; -fx-font-weight: bold;");
 
-        Label p1Ind = new Label("PLAYER ONE (BOTTOM)");
-        p1Ind.setStyle("-fx-text-fill: black; -fx-font-size: 22px; -fx-font-weight: bold;");
+        Label p1Ind = new Label("PLAYER ONE ");
+        p1Ind.setStyle("-fx-text-fill: WHITE; -fx-font-size: 24px; -fx-font-weight: bold;");
 
-        VBox topCenter = new VBox(3, turnLabel, p2Ind);
+        VBox topCenter = new VBox(10, turnLabel, p2Ind);
         topCenter.setAlignment(Pos.CENTER);
         HBox topBox = new HBox(80, scoreP2, topCenter, scoreP1);
         topBox.setAlignment(Pos.CENTER);
@@ -90,7 +92,7 @@ public class GameUIController {
 
         uiOverlay.setTop(topBox);
         VBox centerBox = new VBox(boardPane);
-        centerBox.setAlignment(Pos.TOP_CENTER); // moves board toward top
+        centerBox.setAlignment(Pos.CENTER); // moves board toward top
         VBox.setMargin(boardPane, new Insets(0, 0, 0, 0)); // fine-tune top margin
         uiOverlay.setCenter(centerBox);
 

@@ -17,8 +17,9 @@ public class StartMenuView extends StackPane {
         try {
             Image bg = new Image(getClass().getResourceAsStream("/gebeta/resources/menu_bg.png"));
             ImageView bgView = new ImageView(bg);
-            bgView.setFitWidth(1100);
-            bgView.setFitHeight(500);
+            bgView.setPreserveRatio(false); // allow stretching to fill the container
+            bgView.fitWidthProperty().bind(this.widthProperty());  // bind width to StackPane width
+            bgView.fitHeightProperty().bind(this.heightProperty()); // bind height to StackPane height
             getChildren().add(bgView);
         } catch (Exception e) {
             this.setStyle("-fx-background-color: #3e2723;");
