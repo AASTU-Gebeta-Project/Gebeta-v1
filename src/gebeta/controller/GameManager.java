@@ -47,7 +47,7 @@ public class GameManager{
         }
 
         if (!extraTurn) {
-            currentPlayer = opponent;
+            switchTurn();
         }
         return true;
     }
