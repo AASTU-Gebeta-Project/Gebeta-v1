@@ -31,25 +31,24 @@ public class GameManager{
         currentPlayer = player1;
         gameOver = false;
     }
-    public boolean playTurn(int pitIndex){
-        if (gameOver){
-            return false;
-        }
-        if (!moveValidator.isValidMove(board, currentPlayer, pitIndex)){
-            return false;
-        }
-        Player opponent = currentPlayer == player1? player2: player1;
+    public boolean playTurn(int pitIndex) {
+        if (gameOver) return false;
+
+        if (!moveValidator.isValidMove(board, currentPlayer, pitIndex)) return false;
+
+        Player opponent = (currentPlayer == player1) ? player2 : player1;
         boolean extraTurn = gameLogic.executeMove(board, currentPlayer, opponent, pitIndex);
 
-        if (gameLogic.isGameOver(board, player1, player2)){
-            gameOver = true;
+        // CHECK IF GAME IS OVER AFTER MOVE
+        if (gameLogic.isGameOver(board, player1, player2)) {
             gameLogic.collectRemainingStones(board, player1, player2);
-            return false;
-        }
-        if (!extraTurn){
-            switchTurn();
+            this.gameOver = true;
+            return true; // Return true to trigger UI refresh
         }
 
+        if (!extraTurn) {
+            switchTurn();
+        }
         return true;
     }
     private void switchTurn(){
