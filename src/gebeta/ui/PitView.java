@@ -21,10 +21,10 @@ public class PitView extends StackPane {
         if (isStore) {
             // Restore Rectangle for Stores
             Rectangle storeRect = new Rectangle(75, 180);
-            storeRect.setFill(Color.SILVER);
+            storeRect.setFill(Color.web("#5d4037"));
             storeRect.setArcWidth(20);
             storeRect.setArcHeight(20);
-            storeRect.setStroke(Color.BLACK);
+            storeRect.setStroke(Color.WHITE);
             storeRect.setStrokeWidth(4);
             getChildren().add(storeRect);
         } else {

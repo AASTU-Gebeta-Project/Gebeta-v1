@@ -23,8 +23,20 @@ public class GameManager{
         moveValidator = new MoveValidator();
         saveLoadSystem = new SaveLoadSystem();
     }
-
+    public void deleteSaveFile() {
+        java.io.File file = new java.io.File("gebeta_save.dat");
+        if (file.exists()) {
+            file.delete();
+            System.out.println("Save file deleted.");
+        }
+    }
+    public void endGamePermanently() {
+        this.board = null;
+        this.gameOver = true;
+        deleteSaveFile(); // This removes the .dat file so Resume disappears
+    }
     public void startNewGame(String p1Name, String p2Name, boolean vsAI, Difficulty difficulty){
+        deleteSaveFile();
         board = new GameBoard();
         player1 = new Player(p1Name, GameBoard.P1_START, GameBoard.P1_END, GameBoard.P1_STORE, false);
 
@@ -48,6 +60,7 @@ public class GameManager{
         if (gameLogic.isGameOver(board, player1, player2)) {
             gameLogic.collectRemainingStones(board, player1, player2);
             this.gameOver = true;
+            deleteSaveFile();
             return true; // Return true to trigger UI refresh
         }
 

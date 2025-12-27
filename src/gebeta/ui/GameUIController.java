@@ -1,8 +1,11 @@
 package gebeta.ui;
 
 import gebeta.controller.GameManager;
+import gebeta.domain.Difficulty;
 import gebeta.domain.GameBoard;
 import gebeta.domain.Player;
+import gebeta.persistence.SaveLoadSystem;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.geometry.Insets;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,20 +31,29 @@ public class GameUIController {
     private final Label scoreP2 = new Label();
     private final Runnable backToHome;
     private MediaPlayer gameMusicPlayer;
+    private final SaveLoadSystem saveLoadSystem = new SaveLoadSystem();
+    // Fields to remember the current game mode
+    private final boolean isVsAI;
+    private final Difficulty currentDifficulty;
 
-    public GameUIController(GameManager gameManager, Runnable backToHome) {
+    public GameUIController(GameManager gameManager, Runnable backToHome, boolean vsAI, Difficulty difficulty) {
         this.gameManager = gameManager;
         this.backToHome = backToHome;
+        this.isVsAI = vsAI;
+        this.currentDifficulty = difficulty;
+
         setupBackground();
         setupLayout();
         buildBoard();
         refreshBoard();
         playGameMusic();
+
+        // Check if the AI should start the first move
+        checkAndTriggerAI();
     }
 
     private void playGameMusic() {
         try {
-
             var res = getClass().getResource("/gebeta/resources/Ethiopian_Instrumental_1(128k).m4a");
             if (res != null) {
                 gameMusicPlayer = new MediaPlayer(new Media(res.toExternalForm()));
@@ -56,7 +69,7 @@ public class GameUIController {
         try {
             Image gameBg = new Image(getClass().getResourceAsStream("/gebeta/resources/final2.png"));
             ImageView bgView = new ImageView(gameBg);
-            bgView.setPreserveRatio(false); // stretch to fill the container
+            bgView.setPreserveRatio(false);
             bgView.fitWidthProperty().bind(mainContainer.widthProperty());
             bgView.fitHeightProperty().bind(mainContainer.heightProperty());
             mainContainer.getChildren().add(bgView);
@@ -66,8 +79,8 @@ public class GameUIController {
 
     private void setupLayout() {
 
-        boardPane.setHgap(12);
-        boardPane.setVgap(-10);
+        boardPane.setHgap(20);
+        boardPane.setVgap(50);
         boardPane.setAlignment(Pos.CENTER);
 
         turnLabel.setStyle("-fx-font-size: 22; -fx-text-fill: gold; -fx-background-color: rgba(0,0,0,0.8); -fx-padding: 8;");
@@ -75,7 +88,7 @@ public class GameUIController {
         scoreP2.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 20; -fx-font-weight: bold;");
 
 
-        Label p2Ind = new Label("PLAYER TWO ");
+        Label p2Ind = new Label((isVsAI ? "MACHINE" : "PLAYER TWO"));
         p2Ind.setStyle("-fx-text-fill: WHITE; -fx-font-size: 22px; -fx-font-weight: bold;");
 
         Label p1Ind = new Label("PLAYER ONE ");
@@ -113,32 +126,40 @@ public class GameUIController {
 
         Button resume = new Button("RESUME");
         resume.setOnAction(e -> mainContainer.getChildren().remove(pauseBox));
+
         Button restart = new Button("RESTART");
         restart.setOnAction(e -> {
-            // Stop music first
-            if (gameMusicPlayer != null) {
-                gameMusicPlayer.stop();
-            }
+            if (gameMusicPlayer != null) gameMusicPlayer.stop();
 
-            // Reset game logic
-            gameManager.startNewGame("Player 1", "Player 2", false, null);
+            // Use the stored variables to maintain game mode on restart
+            gameManager.startNewGame("Player 1", isVsAI ? "Machine" : "Player 2", isVsAI, currentDifficulty);
 
-            // Remove pause menu
             mainContainer.getChildren().remove(pauseBox);
-
-            // Restart music and refresh UI
             playGameMusic();
             refreshBoard();
+            checkAndTriggerAI();
         });
 
 
         Button exit = new Button("HOME");
         exit.setOnAction(e -> {
             if (gameMusicPlayer != null) gameMusicPlayer.stop();
+            saveLoadSystem.saveGame(
+                    gameManager.getBoard(),
+                    gameManager.getPlayer1(),
+                    gameManager.getPlayer2(),
+                    gameManager.getCurrentPlayer()
+            );
+            backToHome.run();
+        });
+        Button btnEndGame = new Button("END GAME");
+        btnEndGame.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white;");
+        btnEndGame.setOnAction(e -> {
+            gameManager.endGamePermanently(); // Clears file and memory
             backToHome.run();
         });
 
-        pauseBox.getChildren().addAll(pauseLbl, resume, restart, exit);
+        pauseBox.getChildren().addAll(pauseLbl, resume, restart,btnEndGame ,exit);
         mainContainer.getChildren().add(pauseBox);
     }
 
@@ -156,6 +177,42 @@ public class GameUIController {
         }
     }
 
+    // New logic to handle AI moves
+    private void checkAndTriggerAI() {
+        if (!gameManager.isGameOver() && gameManager.getCurrentPlayer().isAI()) {
+            // 1. Let the AI decide its move
+            int aiMove = gameManager.getBestMoveForAI();
+
+            if (aiMove != -1) {
+                // 2. Find the PitView corresponding to the AI's choice
+                PitView selectedPit = pitViews.stream()
+                        .filter(pv -> pv.getPitIndex() == aiMove)
+                        .findFirst().orElse(null);
+
+                // 3. Highlight the pit so the user knows which one was picked
+                if (selectedPit != null) {
+                    selectedPit.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-border-radius: 50;");
+                }
+
+                // 4. Use a PauseTransition to create a delay BEFORE the move happens
+                PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+                pause.setOnFinished(event -> {
+                    // Remove highlight
+                    if (selectedPit != null) selectedPit.setStyle("");
+
+                    // Execute the move
+                    gameManager.playTurn(aiMove);
+                    refreshBoard();
+
+                    // 5. Recursively check if the AI gets an extra turn
+                    // This will trigger another delay for the next move
+                    checkAndTriggerAI();
+                });
+                pause.play();
+            }
+        }
+    }
+
     private void showWinnerScreen() {
         VBox winBox = new VBox(20);
         winBox.setAlignment(Pos.CENTER);
@@ -163,13 +220,17 @@ public class GameUIController {
         Player w = gameManager.getWinner();
         Label winLbl = new Label(w == null ? "DRAW!" : w.getName() + " WINS!");
         winLbl.setStyle("-fx-text-fill: gold; -fx-font-size: 50;");
+
         Button again = new Button("PLAY AGAIN");
         again.setOnAction(e -> {
-            gameManager.startNewGame("Player 1", "Player 2");
+            // Keep AI settings for "Play Again"
+            gameManager.startNewGame("Player 1", isVsAI ? "Machine" : "Player 2", isVsAI, currentDifficulty);
             mainContainer.getChildren().remove(winBox);
             playGameMusic();
             refreshBoard();
+            checkAndTriggerAI();
         });
+
         Button home = new Button("HOME");
         home.setOnAction(e -> backToHome.run());
         winBox.getChildren().addAll(winLbl, again, home);
@@ -189,17 +250,21 @@ public class GameUIController {
     private void addPit(int index, int col, int row, boolean isStore) {
         PitView pv = new PitView(index, gameManager.getBoard().getPit(index).getStoneCount(), isStore);
         pitViews.add(pv);
-
-        // Add to the grid normally
         boardPane.add(pv, col, row);
 
         if (isStore) {
-            // Pushes ONLY the store down by a specific pixel amount.
-            // Adjust the '45' until it is perfectly centered between your pit rows.
-            pv.setTranslateY(60);
+            // FIX: Span 2 rows and center vertically
+            GridPane.setRowSpan(pv, 2);
+            GridPane.setValignment(pv, javafx.geometry.VPos.CENTER);
         } else {
             pv.setOnMouseClicked(e -> {
-                if(gameManager.playTurn(index)) refreshBoard();
+                // Only allow click if it is Human turn
+                if (!gameManager.getCurrentPlayer().isAI() && !gameManager.isGameOver()) {
+                    if (gameManager.playTurn(index)) {
+                        refreshBoard();
+                        checkAndTriggerAI(); // Pass turn to AI
+                    }
+                }
             });
         }
     }
