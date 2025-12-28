@@ -75,12 +75,6 @@ public class GameManager{
 
     }
 
-    // public void requestAIMove() {
-    //     if (!gameOver && currentPlayer == player2) {
-    //         int bestPit = ai.findBestMove(board, player2, player1);
-    //         playTurn(bestPit);
-    //     }
-    // }
     public int getBestMoveForAI() {
         if (currentPlayer.isAI()) {
             return ai.findBestMove(board, currentPlayer, getOpponent(currentPlayer));

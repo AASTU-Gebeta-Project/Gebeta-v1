@@ -38,8 +38,8 @@ public class GameBoard implements Serializable {
     }
 
     public Pit getPit(int index) {
-        if (index < 0 || index >= TOTAL_PITS)
-            System.out.println("Invalid pit index " + index);
+        // if (index < 0 || index >= TOTAL_PITS)
+        //     System.out.println("Invalid pit index " + index);
 
         return pits[index];
     }
@@ -56,10 +56,10 @@ public class GameBoard implements Serializable {
     
     }
 
-    public void printBoard() {
-        for (Pit p : pits) {
-            System.out.println(p);
-        }
-    }
+    // public void printBoard() {
+    //     for (Pit p : pits) {
+    //         System.out.println(p);
+    //     }
+    // }
 }
 
