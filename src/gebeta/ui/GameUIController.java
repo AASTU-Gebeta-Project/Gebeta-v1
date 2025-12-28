@@ -50,6 +50,8 @@ public class GameUIController {
 
         // Check if the AI should start the first move
         checkAndTriggerAI();
+        // Add this at the end of the constructor
+        addMuteButton();
     }
 
     private void playGameMusic() {
@@ -58,6 +60,7 @@ public class GameUIController {
             if (res != null) {
                 gameMusicPlayer = new MediaPlayer(new Media(res.toExternalForm()));
                 gameMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+                gameMusicPlayer.setMute(StartMenuView.isMuted);
                 gameMusicPlayer.play();
             }
         } catch (Exception e) {
@@ -117,22 +120,54 @@ public class GameUIController {
     }
 
     private void showPauseMenu() {
-        VBox pauseBox = new VBox(20);
+        VBox pauseBox = new VBox(22);
         pauseBox.setAlignment(Pos.CENTER);
-        pauseBox.setStyle("-fx-background-color: rgba(0,0,0,0.85);");
+        pauseBox.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);" +
+                        "-fx-padding: 40;" +
+                        "-fx-background-radius: 20;"
+        );
 
         Label pauseLbl = new Label("PAUSED");
-        pauseLbl.setStyle("-fx-text-fill: white; -fx-font-size: 40;");
+        pauseLbl.setStyle(
+                "-fx-text-fill: white;" +
+                        "-fx-font-size: 42;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-letter-spacing: 3px;"
+        );
 
         Button resume = new Button("RESUME");
+        resume.setStyle(
+                "-fx-background-color: #27ae60;" +   // green = positive action
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 16;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-padding: 10 30;" +
+                        "-fx-background-radius: 30;"
+        );
         resume.setOnAction(e -> mainContainer.getChildren().remove(pauseBox));
 
         Button restart = new Button("RESTART");
+        restart.setStyle(
+                "-fx-background-color: #2980b9;" +  // blue = neutral action
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 16;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-padding: 10 30;" +
+                        "-fx-background-radius: 30;"
+        );
         restart.setOnAction(e -> {
             if (gameMusicPlayer != null) gameMusicPlayer.stop();
 
-            // Use the stored variables to maintain game mode on restart
-            gameManager.startNewGame("Player 1", isVsAI ? "Machine" : "Player 2", isVsAI, currentDifficulty);
+            gameManager.startNewGame(
+                    "Player 1",
+                    isVsAI ? "Machine" : "Player 2",
+                    isVsAI,
+                    currentDifficulty
+            );
 
             mainContainer.getChildren().remove(pauseBox);
             playGameMusic();
@@ -140,8 +175,33 @@ public class GameUIController {
             checkAndTriggerAI();
         });
 
+        Button btnEndGame = new Button("END GAME");
+        btnEndGame.setStyle(
+                "-fx-background-color: #c0392b;" +  // red = destructive action
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 15;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-padding: 10 30;" +
+                        "-fx-background-radius: 30;"
+        );
+        btnEndGame.setOnAction(e -> {
+            gameManager.endGamePermanently();
+            backToHome.run();
+        });
 
         Button exit = new Button("HOME");
+        exit.setStyle(
+                "-fx-background-color: transparent;" + // lowest priority
+                        "-fx-border-color: white;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 14;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-padding: 8 26;" +
+                        "-fx-background-radius: 30;" +
+                        "-fx-border-radius: 30;"
+        );
         exit.setOnAction(e -> {
             if (gameMusicPlayer != null) gameMusicPlayer.stop();
             saveLoadSystem.saveGame(
@@ -152,16 +212,18 @@ public class GameUIController {
             );
             backToHome.run();
         });
-        Button btnEndGame = new Button("END GAME");
-        btnEndGame.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white;");
-        btnEndGame.setOnAction(e -> {
-            gameManager.endGamePermanently(); // Clears file and memory
-            backToHome.run();
-        });
 
-        pauseBox.getChildren().addAll(pauseLbl, resume, restart,btnEndGame ,exit);
+        pauseBox.getChildren().addAll(
+                pauseLbl,
+                resume,
+                restart,
+                btnEndGame,
+                exit
+        );
+
         mainContainer.getChildren().add(pauseBox);
     }
+
 
     public void refreshBoard() {
         for (PitView pit : pitViews) {
@@ -214,17 +276,41 @@ public class GameUIController {
     }
 
     private void showWinnerScreen() {
-        VBox winBox = new VBox(20);
+        VBox winBox = new VBox(22);
         winBox.setAlignment(Pos.CENTER);
-        winBox.setStyle("-fx-background-color: rgba(0,0,0,0.9);");
+        winBox.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, #000428, #004e92);" +
+                        "-fx-padding: 45;" +
+                        "-fx-background-radius: 20;"
+        );
+
         Player w = gameManager.getWinner();
         Label winLbl = new Label(w == null ? "DRAW!" : w.getName() + " WINS!");
-        winLbl.setStyle("-fx-text-fill: gold; -fx-font-size: 50;");
+        winLbl.setStyle(
+                "-fx-text-fill: linear-gradient(to right, #f7971e, #ffd200);" + // gold gradient
+                        "-fx-font-size: 52;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-letter-spacing: 3px;"
+        );
 
         Button again = new Button("PLAY AGAIN");
+        again.setStyle(
+                "-fx-background-color: #27ae60;" +   // success / replay
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 16;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-padding: 12 34;" +
+                        "-fx-background-radius: 30;"
+        );
         again.setOnAction(e -> {
-            // Keep AI settings for "Play Again"
-            gameManager.startNewGame("Player 1", isVsAI ? "Machine" : "Player 2", isVsAI, currentDifficulty);
+            gameManager.startNewGame(
+                    "Player 1",
+                    isVsAI ? "Machine" : "Player 2",
+                    isVsAI,
+                    currentDifficulty
+            );
             mainContainer.getChildren().remove(winBox);
             playGameMusic();
             refreshBoard();
@@ -232,10 +318,23 @@ public class GameUIController {
         });
 
         Button home = new Button("HOME");
+        home.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-border-color: white;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 14;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-padding: 8 28;" +
+                        "-fx-background-radius: 30;" +
+                        "-fx-border-radius: 30;"
+        );
         home.setOnAction(e -> backToHome.run());
+
         winBox.getChildren().addAll(winLbl, again, home);
         mainContainer.getChildren().add(winBox);
     }
+
 
     private void buildBoard() {
         boardPane.getChildren().clear(); pitViews.clear();
@@ -268,6 +367,29 @@ public class GameUIController {
             });
         }
     }
+    private void addMuteButton() {
+        // Check the global state from StartMenuView
+        Button btnMute = new Button(StartMenuView.isMuted ? "🔇" : "🔊");
+        btnMute.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-text-fill: gold; -fx-font-size: 20px; -fx-background-radius: 50;");
 
+        // Position in bottom right of the mainContainer
+        StackPane.setAlignment(btnMute, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(btnMute, new javafx.geometry.Insets(20));
+
+        mainContainer.getChildren().add(btnMute);
+
+        btnMute.setOnAction(e -> {
+            // Toggle the shared global state
+            StartMenuView.isMuted = !StartMenuView.isMuted;
+
+            // Mute the local game music player
+            if (gameMusicPlayer != null) {
+                gameMusicPlayer.setMute(StartMenuView.isMuted);
+            }
+
+            // Update button icon
+            btnMute.setText(StartMenuView.isMuted ? "🔇" : "🔊");
+        });
+    }
     public StackPane getRoot() { return mainContainer; }
 }

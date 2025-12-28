@@ -39,10 +39,9 @@ public void startNewGame(String p1Name, String p2Name, boolean vsAI, Difficulty 
 }
 public boolean playTurn(int pitIndex) {
     if (gameOver) return false;
-    
+
     if (!moveValidator.isValidMove(board, currentPlayer, pitIndex)) return false;
-    
-        Player opponent = (currentPlayer == player1) ? player2 : player1;
+    Player opponent = (currentPlayer == player1) ? player2 : player1;
         boolean extraTurn = gameLogic.executeMove(board, currentPlayer, opponent, pitIndex);
         
         
@@ -99,22 +98,25 @@ public boolean playTurn(int pitIndex) {
     public void saveGame() {
         saveLoadSystem.saveGame(board, player1, player2, currentPlayer);
     }
-    
+
     public void loadGame() {
         SaveLoadSystem.LoadResult result = saveLoadSystem.loadGame();
-        
+
         if (result != null) {
             this.board = result.getBoard();
             this.player1 = result.getPlayer1();
             this.player2 = result.getPlayer2();
             this.currentPlayer = result.getCurrentPlayer();
             this.gameOver = false;
+
             if (this.player2.isAI()) {
-                // by default load we load with difficulty medium
-                this.ai = new GebetaAI(this.currentDifficulty); 
+                if (this.currentDifficulty == null) {
+                    this.currentDifficulty = Difficulty.MEDIUM;
+                }
+                this.ai = new GebetaAI(this.currentDifficulty);
+
             }
         }
-        
     }
     public void deleteSaveFile() {
         java.io.File file = new java.io.File("gebeta_save.dat");

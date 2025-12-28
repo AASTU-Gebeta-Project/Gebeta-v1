@@ -15,7 +15,8 @@ import java.io.File;
 import java.util.function.BiConsumer;
 import java.util.prefs.Preferences;
 public class StartMenuView extends StackPane {
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer staticMediaPlayer; // Changed to static
+    public static boolean isMuted = false;       // Global state
     private final VBox container = new VBox(20);
     private final BiConsumer<Boolean, Difficulty> onStartGame;
     private final Runnable onShowInfo;
@@ -41,6 +42,18 @@ public class StartMenuView extends StackPane {
 
         container.setAlignment(Pos.CENTER);
         getChildren().add(container);
+        // Inside the StartMenuView Constructor
+        Button btnMute = new Button(isMuted ? "🔇" : "🔊");
+        btnMute.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-text-fill: gold; -fx-font-size: 20px; -fx-background-radius: 50;");
+
+// This aligns the button to the bottom right of the StackPane
+        StackPane.setAlignment(btnMute, Pos.BOTTOM_RIGHT);
+// This adds a 20px margin so it's not touching the very edge
+        StackPane.setMargin(btnMute, new javafx.geometry.Insets(20));
+
+        this.getChildren().add(btnMute);
+
+        btnMute.setOnAction(e -> toggleMute(btnMute));
 
         showMainMenu();
 
@@ -95,7 +108,7 @@ public class StartMenuView extends StackPane {
         btnInfo.setOnAction(e -> onShowInfo.run());
 
         Button btnExit = createMenuButton("EXIT APP");
-        btnExit.setStyle("-fx-font-size: 18px; -fx-background-color: #c0392b; -fx-text-fill: white; -fx-min-width: 200;");
+        btnExit.setStyle("-fx-font-size: 18px; -fx-background-color: RED; -fx-text-fill: white; -fx-min-width: 200;");
         btnExit.setOnAction(e -> System.exit(0));
 
         container.getChildren().addAll(btnStart, btnSettings, btnInfo, btnExit);
@@ -145,17 +158,18 @@ public class StartMenuView extends StackPane {
     }
 
     private void playMenuMusic(String path) {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
+        if (staticMediaPlayer != null) {
+            staticMediaPlayer.stop();
         }
         try {
             currentMusicPath = path;
             prefs.put("music_path", path); // Saves to disk instantly
             var res = getClass().getResource(path);
             if (res != null) {
-                mediaPlayer = new MediaPlayer(new Media(res.toExternalForm()));
-                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                mediaPlayer.play();
+                staticMediaPlayer = new MediaPlayer(new Media(res.toExternalForm()));
+                staticMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+                staticMediaPlayer.setMute(isMuted);
+                staticMediaPlayer.play();
             }
         } catch (Exception e) {
             System.out.println("Music Load Error: " + e.getMessage());
@@ -194,6 +208,13 @@ public class StartMenuView extends StackPane {
         btnBack.setOnAction(e -> showModeSelection());
         container.getChildren().add(btnBack);
     }
+    private void toggleMute(Button btn) {
+        isMuted = !isMuted; // Flip the global boolean
+        if (staticMediaPlayer != null) {
+            staticMediaPlayer.setMute(isMuted); // Apply to the music player
+        }
+        btn.setText(isMuted ? "🔇" : "🔊"); // Update the button text
+    }
 
     private Button createMenuButton(String text) {
         Button btn = new Button(text);
@@ -205,6 +226,6 @@ public class StartMenuView extends StackPane {
     }
 
     public void stopMusic() {
-        if (mediaPlayer != null) mediaPlayer.stop();
+        if (staticMediaPlayer != null) staticMediaPlayer.stop();
     }
 }

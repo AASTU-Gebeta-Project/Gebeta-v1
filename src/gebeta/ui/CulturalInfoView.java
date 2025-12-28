@@ -1,5 +1,6 @@
 package gebeta.ui;
 
+import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -7,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -14,24 +16,25 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-
+import javafx.util.Duration;
 import java.util.Objects;
 
 public class CulturalInfoView {
 
-    private final VBox root = new VBox(30);
+    private final VBox root = new VBox(32);
     private final ScrollPane scrollPane = new ScrollPane();
+    private final StackPane stackRoot = new StackPane();
 
     public CulturalInfoView(Runnable backToHome) {
 
-        /* ================= ROOT CONTENT ================= */
         root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(40));
+        root.setPadding(new Insets(50));
         root.setStyle(
-                "-fx-background-color: linear-gradient(to bottom, #2b1b17, #3e2723);"
+                "-fx-background-color: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);" +
+                        "-fx-background-radius: 25;" +
+                        "-fx-effect: innershadow(gaussian, rgba(0,0,0,0.7), 35, 0.3, 0, 0);"
         );
 
-        /* ================= IMAGE ================= */
         ImageView imageView = new ImageView(
                 new Image(Objects.requireNonNull(
                         getClass().getResourceAsStream(
@@ -39,20 +42,23 @@ public class CulturalInfoView {
                         )
                 ))
         );
-        imageView.setFitWidth(320);
+        imageView.setFitWidth(460);
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
+        imageView.setStyle(
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0.3, 0, 6);"
+        );
 
-        /* ================= TITLE ================= */
         Text title = new Text("GEBETA");
         title.setFill(Color.web("#f4c430"));
-        title.setFont(Font.font("Georgia", FontWeight.BOLD, 42));
+        title.setFont(Font.font("Georgia", FontWeight.EXTRA_BOLD, 46));
+        title.setTextAlignment(TextAlignment.CENTER);
 
         Text subtitle = new Text("Cultural Heritage of Ethiopia");
-        subtitle.setFill(Color.web("#e0c097"));
-        subtitle.setFont(Font.font("Georgia", FontPosture.ITALIC, 20));
+        subtitle.setFill(Color.web("#e6c89c"));
+        subtitle.setFont(Font.font("Georgia", FontPosture.ITALIC, 22));
+        subtitle.setTextAlignment(TextAlignment.CENTER);
 
-        /* ================= BODY TEXT ================= */
         Text infoText = new Text(
                 "Gebeta is a traditional Ethiopian strategy board game played by two players. "
                         + "Stones are picked from holes and distributed across the board with precision and foresight, "
@@ -66,17 +72,17 @@ public class CulturalInfoView {
                         + "Globally known as Mancala, it is respected as one of the world’s oldest and most strategic games, "
                         + "played across Africa, Asia, and the Americas."
         );
-
-        infoText.setFill(Color.web("#f5f0e6"));
-        infoText.setFont(Font.font("Serif", 19));
-        infoText.setWrappingWidth(850);
+        infoText.setFill(Color.web("#f5efe6"));
+        infoText.setFont(Font.font("Serif", 20));
+        infoText.setWrappingWidth(860);
+        infoText.setLineSpacing(7);
         infoText.setTextAlignment(TextAlignment.JUSTIFY);
-        infoText.setLineSpacing(6);
 
         Text rulesTitle = new Text("RULES OF GEBETA");
         rulesTitle.setFill(Color.web("#f4c430"));
-        rulesTitle.setFont(Font.font("Georgia", FontWeight.BOLD, 34));
+        rulesTitle.setFont(Font.font("Georgia", FontWeight.BOLD, 36));
         rulesTitle.setTextAlignment(TextAlignment.CENTER);
+
         Text rulesText = new Text(
                 "GAME COMPONENTS\n\n" +
 
@@ -120,59 +126,77 @@ public class CulturalInfoView {
                         "• The player with more stones in their Mancala wins.\n" +
                         "• Equal stones result in a draw."
         );
-
-        rulesText.setFill(Color.web("#f5f0e6"));
-        rulesText.setFont(Font.font("Serif", 18));
-        rulesText.setWrappingWidth(850);
-        rulesText.setLineSpacing(6);
+        rulesText.setFill(Color.web("#f1ebe2"));
+        rulesText.setFont(Font.font("Serif", 19));
+        rulesText.setWrappingWidth(860);
+        rulesText.setLineSpacing(7);
         rulesText.setTextAlignment(TextAlignment.LEFT);
 
-
-        /* ================= BUTTON ================= */
         Button btnBack = new Button("← Back to Home");
-        btnBack.setFont(Font.font("Arial", 16));
+        btnBack.setFont(Font.font("Segoe UI", FontWeight.BOLD, 16));
         btnBack.setStyle(
                 "-fx-background-color: transparent;" +
-                        "-fx-text-fill: #f4c430;"
+                        "-fx-border-color: #f4c430;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-text-fill: #f4c430;" +
+                        "-fx-padding: 10 30;" +
+                        "-fx-background-radius: 30;" +
+                        "-fx-border-radius: 30;"
         );
+
         btnBack.setOnMouseEntered(e ->
                 btnBack.setStyle(
-                        "-fx-background-color: transparent;" +
-                                "-fx-text-fill: white;"
+                        "-fx-background-color: #f4c430;" +
+                                "-fx-text-fill: #3a241d;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-padding: 10 30;" +
+                                "-fx-background-radius: 30;"
                 )
         );
+
         btnBack.setOnMouseExited(e ->
                 btnBack.setStyle(
                         "-fx-background-color: transparent;" +
-                                "-fx-text-fill: #f4c430;"
+                                "-fx-border-color: #f4c430;" +
+                                "-fx-border-width: 2;" +
+                                "-fx-text-fill: #f4c430;" +
+                                "-fx-padding: 10 30;" +
+                                "-fx-background-radius: 30;" +
+                                "-fx-border-radius: 30;"
                 )
         );
+
         btnBack.setOnAction(e -> backToHome.run());
 
-        /* ================= ADD CONTENT ================= */
         root.getChildren().addAll(
                 imageView,
                 title,
                 subtitle,
                 infoText,
                 rulesTitle,
-                rulesText,
-                btnBack
+                rulesText
         );
 
-        /* ================= SCROLLPANE (WHOLE SCENE) ================= */
         scrollPane.setContent(root);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPannable(true); // allows mouse drag scrolling
+        scrollPane.setPannable(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle(
-                "-fx-background-color: transparent;" +
-                        "-fx-background: transparent;"
-        );
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+
+        scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> scrollPane.setVvalue(scrollPane.getVmin()));
+
+        TranslateTransition slideUp = new TranslateTransition(Duration.millis(550), root);
+        slideUp.setFromY(80);
+        slideUp.setToY(0);
+        slideUp.play();
+
+        stackRoot.getChildren().addAll(scrollPane, btnBack);
+        stackRoot.setAlignment(btnBack, Pos.BOTTOM_LEFT);
+        StackPane.setMargin(btnBack, new Insets(0, 20, 20, 0));
     }
 
     public Parent getRoot() {
-        return scrollPane;
+        return stackRoot;
     }
 }
