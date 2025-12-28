@@ -14,7 +14,6 @@ import javafx.scene.media.MediaPlayer;
 import java.io.File;
 import java.util.function.BiConsumer;
 import java.util.prefs.Preferences;
-import java.io.File;
 public class StartMenuView extends StackPane {
     private MediaPlayer mediaPlayer;
     private final VBox container = new VBox(20);
