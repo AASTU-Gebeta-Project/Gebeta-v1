@@ -144,28 +144,6 @@ public class CulturalInfoView {
                         "-fx-border-radius: 30;"
         );
 
-        btnBack.setOnMouseEntered(e ->
-                btnBack.setStyle(
-                        "-fx-background-color: #f4c430;" +
-                                "-fx-text-fill: #3a241d;" +
-                                "-fx-font-weight: bold;" +
-                                "-fx-padding: 10 30;" +
-                                "-fx-background-radius: 30;"
-                )
-        );
-
-        btnBack.setOnMouseExited(e ->
-                btnBack.setStyle(
-                        "-fx-background-color: transparent;" +
-                                "-fx-border-color: #f4c430;" +
-                                "-fx-border-width: 2;" +
-                                "-fx-text-fill: #f4c430;" +
-                                "-fx-padding: 10 30;" +
-                                "-fx-background-radius: 30;" +
-                                "-fx-border-radius: 30;"
-                )
-        );
-
         btnBack.setOnAction(e -> backToHome.run());
 
         root.getChildren().addAll(
