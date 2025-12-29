@@ -47,10 +47,7 @@ public class GameUIController {
         buildBoard();
         refreshBoard();
         playGameMusic();
-
-        // Check if the AI should start the first move
         checkAndTriggerAI();
-        // Add this at the end of the constructor
         addMuteButton();
     }
 
@@ -109,13 +106,13 @@ public class GameUIController {
         uiOverlay.setTop(topBox);
         VBox centerBox = new VBox(boardPane);
         centerBox.setAlignment(Pos.CENTER); // moves board toward top
-        VBox.setMargin(boardPane, new Insets(0, 0, 0, 0)); // fine-tune top margin
+        VBox.setMargin(boardPane, new Insets(0, 0, 0, 0));
         uiOverlay.setCenter(centerBox);
 
 
         VBox bottomBox = new VBox(5, p1Ind, btnPause);
         bottomBox.setAlignment(Pos.CENTER);
-        bottomBox.setStyle("-fx-padding: 0 0 20 0;"); // Bottom padding to lift labels
+        bottomBox.setStyle("-fx-padding: 0 0 20 0;");
         uiOverlay.setBottom(bottomBox);
     }
 
@@ -139,7 +136,7 @@ public class GameUIController {
 
         Button resume = new Button("RESUME");
         resume.setStyle(
-                "-fx-background-color: #27ae60;" +   // green = positive action
+                "-fx-background-color: #27ae60;" +
                         "-fx-text-fill: white;" +
                         "-fx-font-size: 16;" +
                         "-fx-font-weight: bold;" +
@@ -151,7 +148,7 @@ public class GameUIController {
 
         Button restart = new Button("RESTART");
         restart.setStyle(
-                "-fx-background-color: #2980b9;" +  // blue = neutral action
+                "-fx-background-color: #2980b9;" +
                         "-fx-text-fill: white;" +
                         "-fx-font-size: 16;" +
                         "-fx-font-weight: bold;" +
@@ -177,7 +174,7 @@ public class GameUIController {
 
         Button btnEndGame = new Button("END GAME");
         btnEndGame.setStyle(
-                "-fx-background-color: #c0392b;" +  // red = destructive action
+                "-fx-background-color: #c0392b;" +
                         "-fx-text-fill: white;" +
                         "-fx-font-size: 15;" +
                         "-fx-font-weight: bold;" +
@@ -192,7 +189,7 @@ public class GameUIController {
 
         Button exit = new Button("HOME");
         exit.setStyle(
-                "-fx-background-color: transparent;" + // lowest priority
+                "-fx-background-color: transparent;" +
                         "-fx-border-color: white;" +
                         "-fx-border-width: 2;" +
                         "-fx-text-fill: white;" +
@@ -239,35 +236,26 @@ public class GameUIController {
         }
     }
 
-    // New logic to handle AI moves
     private void checkAndTriggerAI() {
         if (!gameManager.isGameOver() && gameManager.getCurrentPlayer().isAI()) {
-            // 1. Let the AI decide its move
             int aiMove = gameManager.getBestMoveForAI();
 
             if (aiMove != -1) {
-                // 2. Find the PitView corresponding to the AI's choice
                 PitView selectedPit = pitViews.stream()
                         .filter(pv -> pv.getPitIndex() == aiMove)
                         .findFirst().orElse(null);
 
-                // 3. Highlight the pit so the user knows which one was picked
                 if (selectedPit != null) {
                     selectedPit.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-border-radius: 50;");
                 }
 
-                // 4. Use a PauseTransition to create a delay BEFORE the move happens
                 PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
                 pause.setOnFinished(event -> {
-                    // Remove highlight
                     if (selectedPit != null) selectedPit.setStyle("");
 
-                    // Execute the move
+
                     gameManager.playTurn(aiMove);
                     refreshBoard();
-
-                    // 5. Recursively check if the AI gets an extra turn
-                    // This will trigger another delay for the next move
                     checkAndTriggerAI();
                 });
                 pause.play();
@@ -287,7 +275,7 @@ public class GameUIController {
         Player w = gameManager.getWinner();
         Label winLbl = new Label(w == null ? "DRAW!" : w.getName() + " WINS!");
         winLbl.setStyle(
-                "-fx-text-fill: linear-gradient(to right, #f7971e, #ffd200);" + // gold gradient
+                "-fx-text-fill: linear-gradient(to right, #f7971e, #ffd200);" +
                         "-fx-font-size: 52;" +
                         "-fx-font-weight: bold;" +
                         "-fx-font-family: 'Segoe UI';" +
@@ -296,7 +284,7 @@ public class GameUIController {
 
         Button again = new Button("PLAY AGAIN");
         again.setStyle(
-                "-fx-background-color: #27ae60;" +   // success / replay
+                "-fx-background-color: #27ae60;" +
                         "-fx-text-fill: white;" +
                         "-fx-font-size: 16;" +
                         "-fx-font-weight: bold;" +
@@ -352,42 +340,32 @@ public class GameUIController {
         boardPane.add(pv, col, row);
 
         if (isStore) {
-            // FIX: Span 2 rows and center vertically
             GridPane.setRowSpan(pv, 2);
             GridPane.setValignment(pv, javafx.geometry.VPos.CENTER);
         } else {
             pv.setOnMouseClicked(e -> {
-                // Only allow click if it is Human turn
                 if (!gameManager.getCurrentPlayer().isAI() && !gameManager.isGameOver()) {
                     if (gameManager.playTurn(index)) {
                         refreshBoard();
-                        checkAndTriggerAI(); // Pass turn to AI
+                        checkAndTriggerAI();
                     }
                 }
             });
         }
     }
     private void addMuteButton() {
-        // Check the global state from StartMenuView
         Button btnMute = new Button(StartMenuView.isMuted ? "🔇" : "🔊");
         btnMute.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-text-fill: gold; -fx-font-size: 20px; -fx-background-radius: 50;");
-
-        // Position in bottom right of the mainContainer
         StackPane.setAlignment(btnMute, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(btnMute, new javafx.geometry.Insets(20));
 
         mainContainer.getChildren().add(btnMute);
 
         btnMute.setOnAction(e -> {
-            // Toggle the shared global state
             StartMenuView.isMuted = !StartMenuView.isMuted;
-
-            // Mute the local game music player
             if (gameMusicPlayer != null) {
                 gameMusicPlayer.setMute(StartMenuView.isMuted);
             }
-
-            // Update button icon
             btnMute.setText(StartMenuView.isMuted ? "🔇" : "🔊");
         });
     }

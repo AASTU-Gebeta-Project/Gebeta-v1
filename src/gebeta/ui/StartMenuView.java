@@ -15,8 +15,8 @@ import java.io.File;
 import java.util.function.BiConsumer;
 import java.util.prefs.Preferences;
 public class StartMenuView extends StackPane {
-    public static MediaPlayer staticMediaPlayer; // Changed to static
-    public static boolean isMuted = false;       // Global state
+    public static MediaPlayer staticMediaPlayer;
+    public static boolean isMuted = false;
     private final VBox container = new VBox(20);
     private final BiConsumer<Boolean, Difficulty> onStartGame;
     private final Runnable onShowInfo;
@@ -25,7 +25,6 @@ public class StartMenuView extends StackPane {
     // Java Preferences API to save settings permanently on the hard drive
     private static final Preferences prefs = Preferences.userNodeForPackage(StartMenuView.class);
 
-    // Retrieve saved paths or use defaults
     private static String currentBgPath = prefs.get("bg_path", "/gebeta/resources/menu_bg.png");
     private static String currentMusicPath = prefs.get("music_path", "/gebeta/resources/background_music.m4a");
 
@@ -46,9 +45,8 @@ public class StartMenuView extends StackPane {
         Button btnMute = new Button(isMuted ? "🔇" : "🔊");
         btnMute.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-text-fill: gold; -fx-font-size: 20px; -fx-background-radius: 50;");
 
-// This aligns the button to the bottom right of the StackPane
         StackPane.setAlignment(btnMute, Pos.BOTTOM_RIGHT);
-// This adds a 20px margin so it's not touching the very edge
+
         StackPane.setMargin(btnMute, new javafx.geometry.Insets(20));
 
         this.getChildren().add(btnMute);
@@ -57,7 +55,6 @@ public class StartMenuView extends StackPane {
 
         showMainMenu();
 
-        // Load the saved music
         playMenuMusic(currentMusicPath);
     }
 
@@ -66,17 +63,16 @@ public class StartMenuView extends StackPane {
 
         Label title = new Label("GEBETA");
 
-// Using a Serif font for a traditional/royal feel
         title.setStyle(
                 "-fx-font-family: 'Georgia', serif;" +
-                        "-fx-font-size: 72px;" +               // Increased size for impact
-                        "-fx-text-fill: #FFD700;" +            // Hex Gold for better precision
+                        "-fx-font-size: 72px;" +
+                        "-fx-text-fill: #FFD700;" +
                         "-fx-font-weight: bold;" +
-                        "-fx-letter-spacing: 8px;" +           // Spaced out letters for elegance
+                        "-fx-letter-spacing: 8px;" +
                         "-fx-padding: 0 0 30 0;"
         );
 
-// Add a 3D Shadow effect
+// 3d
         javafx.scene.effect.DropShadow titleShadow = new javafx.scene.effect.DropShadow();
         titleShadow.setRadius(10.0);
         titleShadow.setOffsetX(3.0);
@@ -86,8 +82,7 @@ public class StartMenuView extends StackPane {
         title.setEffect(titleShadow);
         container.getChildren().add(title);
         File saveFile = new File("gebeta_save.dat");
-        // --- RESUME LOGIC ---
-        // Check if file exists AND is not empty (length > 0)
+
         if (saveFile.exists() && saveFile.length() > 0) {
             Button btnResume = createMenuButton("RESUME PREVIOUS GAME");
             btnResume.setStyle("-fx-font-size: 18px; -fx-background-color: #27ae60; -fx-text-fill: white; -fx-border-color: gold;");
@@ -209,11 +204,11 @@ public class StartMenuView extends StackPane {
         container.getChildren().add(btnBack);
     }
     private void toggleMute(Button btn) {
-        isMuted = !isMuted; // Flip the global boolean
+        isMuted = !isMuted;
         if (staticMediaPlayer != null) {
-            staticMediaPlayer.setMute(isMuted); // Apply to the music player
+            staticMediaPlayer.setMute(isMuted);
         }
-        btn.setText(isMuted ? "🔇" : "🔊"); // Update the button text
+        btn.setText(isMuted ? "🔇" : "🔊");
     }
 
     private Button createMenuButton(String text) {
