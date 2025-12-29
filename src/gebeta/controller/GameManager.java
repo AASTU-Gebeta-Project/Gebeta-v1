@@ -138,7 +138,7 @@ public boolean playTurn(int pitIndex) {
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
-    public Player getOpponent(Player currentPlayer){
+    public Player getOpponent(Player currentPlayer){ // To get the opposite player when it is time to switch turns
         Player opponent = currentPlayer == player1? player2: player1;
         return opponent;
     }

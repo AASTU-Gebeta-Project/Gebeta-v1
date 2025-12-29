@@ -30,7 +30,8 @@ public class GameBoard implements Serializable {
             }
         }
     }
-    public GameBoard(GameBoard other){
+    public GameBoard(GameBoard other){ 
+        // One for using it to create another fake version of the board for AI to manipulate
         this.pits = new Pit[TOTAL_PITS];
         for(int i = 0; i < TOTAL_PITS; i++){
             this.pits[i] = new Pit(i, other.getPit(i).getStoneCount());
