@@ -17,6 +17,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+
 import java.util.Objects;
 
 public class CulturalInfoView {
@@ -31,17 +32,19 @@ public class CulturalInfoView {
         root.setPadding(new Insets(50));
         root.setStyle(
                 "-fx-background-color: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);" +
-                        "-fx-background-radius: 25;" +
-                        "-fx-effect: innershadow(gaussian, rgba(0,0,0,0.7), 35, 0.3, 0, 0);"
+                "-fx-background-radius: 25;" +
+                "-fx-effect: innershadow(gaussian, rgba(0,0,0,0.7), 35, 0.3, 0, 0);"
         );
 
+        // ✅ FIXED IMAGE PATH HERE
         ImageView imageView = new ImageView(
-                new Image(Objects.requireNonNull(
-                        getClass().getResourceAsStream(
-                                "/gebeta/resources/5cc9eb49a13f457cba8680a35c099d61_408_408.jfif"
-                        )
-                ))
+        new Image(
+                CulturalInfoView.class.getResourceAsStream(
+                        "/gebeta/resources/images/cultural.jpg"
+                )
+        )
         );
+
         imageView.setFitWidth(460);
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
@@ -136,12 +139,12 @@ public class CulturalInfoView {
         btnBack.setFont(Font.font("Segoe UI", FontWeight.BOLD, 16));
         btnBack.setStyle(
                 "-fx-background-color: transparent;" +
-                        "-fx-border-color: #f4c430;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-text-fill: #f4c430;" +
-                        "-fx-padding: 10 30;" +
-                        "-fx-background-radius: 30;" +
-                        "-fx-border-radius: 30;"
+                "-fx-border-color: #f4c430;" +
+                "-fx-border-width: 2;" +
+                "-fx-text-fill: #f4c430;" +
+                "-fx-padding: 10 30;" +
+                "-fx-background-radius: 30;" +
+                "-fx-border-radius: 30;"
         );
 
         btnBack.setOnAction(e -> backToHome.run());
@@ -161,8 +164,6 @@ public class CulturalInfoView {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
-
-        scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> scrollPane.setVvalue(scrollPane.getVmin()));
 
         TranslateTransition slideUp = new TranslateTransition(Duration.millis(550), root);
         slideUp.setFromY(80);

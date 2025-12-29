@@ -70,7 +70,7 @@ public class GebetaAI {
             for (int i = ai.getStartPit(); i <= ai.getEndPit(); i++) aiFinal += board.getStoneCount(i);
             for (int i = human.getStartPit(); i <= human.getEndPit(); i++) huFinal += board.getStoneCount(i);
             
-            return (aiFinal - huFinal) * 100; 
+            return (aiFinal - huFinal) * 100; // ?? Why mutiple the by hunderd
         }
 
         int score = (board.getStoneCount(ai.getStorePit()) - board.getStoneCount(human.getStorePit())) * 10;
