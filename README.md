@@ -124,6 +124,6 @@ Gebeta is a cultural and strategic game widely played in Ethiopia and other regi
 
 ---
 
-**Happy Coding & Strategic Playing! **
+**Happy Coding & Strategic Playing!**
 
 
