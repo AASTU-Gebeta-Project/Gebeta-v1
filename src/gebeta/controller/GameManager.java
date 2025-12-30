@@ -41,7 +41,7 @@ public boolean playTurn(int pitIndex) {
     if (gameOver) return false;
 
     if (!moveValidator.isValidMove(board, currentPlayer, pitIndex)) return false;
-    Player opponent = (currentPlayer == player1) ? player2 : player1;
+        Player opponent = getOpponent(currentPlayer);
         boolean extraTurn = gameLogic.executeMove(board, currentPlayer, opponent, pitIndex);
         
         
@@ -49,7 +49,7 @@ public boolean playTurn(int pitIndex) {
             gameLogic.collectRemainingStones(board, player1, player2);
             this.gameOver = true;
             deleteSaveFile();
-            return true; // Return true to trigger UI refresh
+            return true; 
         }
         
         if (!extraTurn) {
